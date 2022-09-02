@@ -6,6 +6,15 @@ try{
   //You can name the req, res objects anything.
   //but the first parameter is always the request 
   //the second parameter is always the response
+  //@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema( {
+  //  enum: ["male", "female", "other"]
+ // },
+  //age: Number,
+ // posts: {type: [], deafult: []},
+ // posts: {type: [], default: []},
+ // isDeleted:{type:Boolean,default:false}
+
+//}, { timestamps: true });
   let data = req.body;
   let savedData = await userModel.create(data);
   res.send({ msg: savedData });
