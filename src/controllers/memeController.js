@@ -1,34 +1,29 @@
-let axios = require("axios")
+let axios = require("axios");
 
-const getAllMemes = async function(req, res){
-    try{
-        let options = {
-            method: "get",
-            url: `https://api.imgflip.com/get_memes`        
-        }
-        let result = await axios(options)
-        let data = result.data
-        res.status(200).send({Memes: data})
-    } catch(error){
-        res.status(500).send({Error: error.message})
-    }
+
+const getmemes = async function (req,res){
+  try{
+    let memes = await axios.get("https://api.imgflip.com/get_memes")
+    res.status(200).send(memes.data)
+  }catch(err){
+    res.status(500).send(err)
+  }
 }
 
-const memesHandler =async function(req, res){
-    try{
-            let options = {
-            methods: "post",
-            url: `https://api.imgflip.com/caption_image?template_id=181913649&text0=Front End Developer&text1=Full Stack Developer&username=chewie12345&password=meme@123`
-        }
-        let result = await axios(options)
-        let data = result.data
-        res.status(200).send( {Memes: data})
-
-    } catch(error){
-        res.status(500).send({Error: error.message})
+// assignment no 3 solved 
+const memecreate = async function (req, res) {
+    try {
+      let template = req.query.template_id;
+      let text = req.query.text0;
+      let text1 = req.query.text1;
+      let meme = await axios.post(
+        `https://api.imgflip.com/caption_image?template_id=${template}&text0=${text}&text1=${text1}&username=prakashku5566&password=9570938768`
+      );
+      res.status(200).send(meme.data)
+    } catch (err) {
+      res.status(500).send(err);
     }
-}
+  };
 
-
-module.exports.getAllMemes = getAllMemes
-module.exports.memesHandler = memesHandler
+  module.exports.memecreate=memecreate;
+  module.exports.getmemes=getmemes
