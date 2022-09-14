@@ -46,13 +46,23 @@ const getCollege = async function (req, res) {
     try {
         let getData = req.query;
         let saveData = await collegeModel.find(getData);
-        return res.status(200).send({ status: true, msg: "data fetched", data: saveData })
+        return res.status(200).send({ status: true, msg: "Data Fetched", data:{name:saveData.name,fullName:saveData.fullName,logoLink:saveData.logoLink,interns:saveData,interns} })
     } catch (error) {
         return res.status(500).send({ staus: false, msg: error.message })
 
     }
 
 }
+
+// "name": "xyz",
+//     "fullName": "Some Institute of Engineering and Technology",
+//     "logoLink": "some public s3 link for a college logo",
+//     "interns": [
+//       {
+//         "_id": "123a47301a53ecaeea02be59",
+//         "name": "Jane Doe",
+//         "email": "jane.doe@miet.ac.in",
+//         "mobile": "8888888888"
 
 module.exports.createCollege = createCollege
 module.exports.getCollege = getCollege
