@@ -23,24 +23,27 @@ const createIntern = async function (req, res) {
         if (!validation(interndata.name)) return res.status(404).send({ status: false, msg: "name is empty" });
 
         if (!(/^[a-z ,.'-]+$/i.test(interndata.name)))
-            return res.status(404).send({ status: false, msg: " name is not in proper format" });
+            return res.status(422).send({ status: false, msg: " name is not in proper format" });
 
         if (!validation(interndata.email)) return res.status(404).send({ status: false, msg: "email is empty" });
 
         if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(interndata.email)))
-            return res.status(404).send({ status: false, msg: " email is not valid" });
+            return res.status(422).send({ status: false, msg: " email is not valid" });
+
+        let emailData=await internModel.find({email:interndata.email})
+           if(emailData!==interndata.email) return res.status(404).send({status:false,msg:"email already exist "})
 
         if (!validation(interndata.mobile)) return res.status(404).send({ status: false, msg: "mobile number is empty" });
 
         if (!(/^[0]?[789]\d{9}$/.test(interndata.mobile)))
-            return res.status(404).send({ status: false, msg: " mobile number is not valid" });
-
-        // let dbmail=await internModel.find({ email: internModel.email}) 
-        //    return res.status(200).send({ status:false, msg: " mail is allready exits" });
+            return res.status(422).send({ status: false, msg: " mobile number is not valid" });
+        
+        let mobileData=await internModel.find({mobile:interndata.mobile})
+        if(mobileData!==interndata.mobile) return res.status(404).send({status:false,msg:"mobile number already exist "})
 
         
-      
 
+    
         let saveData = await internModel.create(interndata)
         return res.status(201).send({ status: true, msg: "intern created", data: saveData })
     } catch (error) {
