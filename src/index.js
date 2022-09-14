@@ -1,7 +1,7 @@
 const express= require ('express')
 const bodyparser= require('body-parser')
 const mongoose= require('mongoose')
-const router= require("../route/routes")
+const router= require("./route/routes")
 
 const app= express()
 
@@ -14,6 +14,7 @@ mongoose.connect("mongodb+srv://kamrebaba:ironman@cluster0.lvfp80k.mongodb.net/g
 
 app.use('/',router)
 
-app.listen(process.env.PORT || 3000, function(req,res){
-    res.send(console.log("express app running on port" +(process.env.PORT || 3000)))
+app.listen(3000, function () {
+    console.log("code is running sucsessfully on port 3000")
 })
+
