@@ -6,7 +6,7 @@ const router= require("../route/routes")
 const app= express()
 
 app.use(bodyparser.json())
-mongoose.connect("mongodb+srv://kamrebaba:%3Cironman%3E@cluster0.lvfp80k.mongodb.net/project2nd",{
+mongoose.connect("mongodb+srv://kamrebaba:ironman@cluster0.lvfp80k.mongodb.net/group38Database",{
     useNewUrlParser:true
 })
 .then(()=> console.log("MongoDb is Connected"))
