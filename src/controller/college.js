@@ -24,18 +24,23 @@ const createCollege = async function (req, res) {
         
         if(!validBody(collegeData)) return res.status(400).send({status: false, msg:"body is empty"});
 
-    //****************************NAME VALIDATIONS*************************************8 */
+       //****************************NAME VALIDATIONS*************************************8 */
         if(!validation(collegeData.name)) return res.status(400).send({status: false, msg:"name is empty"});
+        
+        let nameData=await collegeModel.findOne({name:collegeData.name})
+           if(nameData) return res.status(400).send({status:false,msg:"name already exist "})
 
         if(!(/^[a-z ,.'-]+$/i.test(collegeData.name))) 
             return res.status(400).send({status: false, msg:" name is not in proper format"});
+
+        //********************************FULLNAME VALIDATIONS*************************8 */
 
         if(!validation(collegeData.fullName)) return res.status(400).send({status: false, msg:"fullname is empty"});
 
         if(!(/^[a-z ,.'-]+$/i.test(collegeData.fullName))) 
             return res.status(400).send({status: false, msg:" fullname is not in proper format"});
 
-    //******************************LOGOLINK VALIDATIONS*********************************** */
+       //******************************LOGOLINK VALIDATIONS*********************************** */
 
          if(!validation(collegeData.logoLink)) return res.status(400).send({status: false, msg:"logolink is empty"});
 
@@ -45,7 +50,7 @@ const createCollege = async function (req, res) {
         let saveData = await collegeModel.create(collegeData);
 
         
-        return res.status(201).send({ status: true, msg: "college created", data: saveData });
+        return res.status(201).send({ status: true, msg: "college created", data: {name:saveData.name,fullName:saveData.fullName,logoLink:saveData.logoLink, isDeleted:false} });
     } catch (error) {
         return res.status(500).send({ staus: false, msg: error.message })
     }
