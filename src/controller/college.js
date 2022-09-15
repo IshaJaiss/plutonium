@@ -41,6 +41,8 @@ const createCollege = async function (req, res) {
             return res.status(400).send({status: false, msg:" logolink is not in proper format"});
            
         let saveData = await collegeModel.create(collegeData);
+
+        
         return res.status(201).send({ status: true, msg: "college created", data: saveData });
     } catch (error) {
         return res.status(500).send({ staus: false, msg: error.message })
