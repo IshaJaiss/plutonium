@@ -46,10 +46,12 @@ const createCollege = async function (req, res) {
 
          if(!(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(collegeData.logoLink))) 
             return res.status(400).send({status: false, msg:" logolink is not in proper format"});
-           
-        let saveData = await collegeModel.create(collegeData);
 
-        
+         let logoData=await collegeModel.findOne({logoLink:collegeData.logoLink})
+            if(logoData) return res.status(400).send({status:false,msg:"logoLink already exist "})
+         
+            
+        let saveData = await collegeModel.create(collegeData);
         return res.status(201).send({ status: true, msg: "college created", data: {name:saveData.name,fullName:saveData.fullName,logoLink:saveData.logoLink, isDeleted:false} });
     } catch (error) {
         return res.status(500).send({ staus: false, msg: error.message })
