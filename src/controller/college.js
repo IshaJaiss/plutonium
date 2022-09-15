@@ -15,6 +15,8 @@ const validBody = function (data) {
     return true
 }
 
+//======================================POST API COLLEGE=================================================================
+
 const createCollege = async function (req, res) {
     try {
         let collegeData = req.body;
@@ -49,6 +51,8 @@ const createCollege = async function (req, res) {
     }
 };
 
+//=========================================GET API COLLEGE====================================================================
+
 const getCollege = async function (req, res) {
     try {
         let getData = req.query.collegeName;
@@ -75,16 +79,6 @@ const getCollege = async function (req, res) {
     }
 
 }
-
-// "name": "xyz",
-//     "fullName": "Some Institute of Engineering and Technology",
-//     "logoLink": "some public s3 link for a college logo",
-//     "interns": [
-//       {
-//         "_id": "123a47301a53ecaeea02be59",
-//         "name": "Jane Doe",
-//         "email": "jane.doe@miet.ac.in",
-//         "mobile": "8888888888"
 
 module.exports.createCollege = createCollege
 module.exports.getCollege = getCollege

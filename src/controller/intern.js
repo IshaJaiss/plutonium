@@ -1,6 +1,5 @@
 const internModel = require("../model/InternModel");
 
-
 const validation = function (data) {
     if (data == undefined || data == null) {
         return false
@@ -16,6 +15,7 @@ const validBody = function (data) {
 }
 
 //**************************************POST API INTERN******************************************************************** */
+
 const createIntern = async function (req, res) {
     try {
         let interndata = req.body
@@ -56,4 +56,5 @@ const createIntern = async function (req, res) {
         return res.status(500).send({ staus: false, msg: error.message })
     }
 };
+
 module.exports.createIntern = createIntern
