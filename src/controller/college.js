@@ -25,29 +25,29 @@ const createCollege = async function (req, res) {
         if(!validBody(collegeData)) return res.status(400).send({status: false, msg:"body is empty"});
 
        //****************************NAME VALIDATIONS*************************************8 */
-        if(!validation(collegeData.name)) return res.status(400).send({status: false, msg:"name is empty"});
+        if(!validation(name)) return res.status(400).send({status: false, msg:"name is empty"});
         
-        let nameData=await collegeModel.findOne({name:collegeData.name})
+        let nameData=await collegeModel.findOne({name:name})
            if(nameData) return res.status(400).send({status:false,msg:"name already exist "})
 
-        if(!(/^[a-z ,.'-]+$/i.test(collegeData.name))) 
+        if(!(/^[a-z ,.'-]+$/i.test(name))) 
             return res.status(400).send({status: false, msg:" name is not in proper format"});
 
         //********************************FULLNAME VALIDATIONS*************************8 */
 
-        if(!validation(collegeData.fullName)) return res.status(400).send({status: false, msg:"fullname is empty"});
+        if(!validation(fullName)) return res.status(400).send({status: false, msg:"fullname is empty"});
 
-        if(!(/^[a-z ,.'-]+$/i.test(collegeData.fullName))) 
+        if(!(/^[a-z ,.'-]+$/i.test(fullName))) 
             return res.status(400).send({status: false, msg:" fullname is not in proper format"});
 
        //******************************LOGOLINK VALIDATIONS*********************************** */
 
-         if(!validation(collegeData.logoLink)) return res.status(400).send({status: false, msg:"logolink is empty"});
+         if(!validation(logoLink)) return res.status(400).send({status: false, msg:"logolink is empty"});
 
-         if(!(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(collegeData.logoLink))) 
+         if(!(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g.test(logoLink))) 
             return res.status(400).send({status: false, msg:" logolink is not in proper format"});
 
-         let logoData=await collegeModel.findOne({logoLink:collegeData.logoLink})
+         let logoData=await collegeModel.findOne({logoLink:logoLink})
             if(logoData) return res.status(400).send({status:false,msg:"logoLink already exist "})
          
             
