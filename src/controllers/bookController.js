@@ -4,12 +4,10 @@ const mongoose = require("mongoose")
 const reviweModel = require("../models/reviewModel")
 
 
-
-
 const createBooks = async function (req, res) {
     try {
         const ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
-        const isValidDate = /^\d{4}\--(0[1-9]|1[012])\--(0[1-9]|[12][0-9]|3[01])$/
+        const isValidDate = /^\d{4}--(0[1-9]|1[012])--(0[1-9]|[12][0-9]|3[01])$/
         data = req.body
 
         const { title, excerpt, userId, ISBN, category, subcategory, releasedAt, isDeleted } = data
@@ -48,16 +46,20 @@ const createBooks = async function (req, res) {
 const getBooks = async function (req, res) {
     try {
         let data = req.query;
-
+   
+          const {userId,category,subcategory} = data
         if (Object.keys(data).length == 0) {
             let findBookwithoutfilter = await bookModel.find({ isDeleted: false }).select({ title: 1, excerpt: 1, userId: 1, category: 1, reviews: 1, releasedAt: 1 }).sort({ title: 1 })
             return res.status(200).send({ status: true, data: findBookwithoutfilter })
         }
-        if (data.userId) {
+        if (!(userId || category || subcategory )) {
+            return res.status(400).send({ satus: false, message: "Please Provide Only userId,Category,Subcategory" })
+        }
+        if (userId) {
+            
+            if (!mongoose.isValidObjectId(userId)) return res.status(400).send({ status: false, message: "userId is not valid" })
 
-            if (!mongoose.isValidObjectId(data.userId)) return res.status(400).send({ status: false, message: "userId is not valid" })
-
-            let alluser = await userModel.findById(data.userId)
+            let alluser = await userModel.findById(userId)
 
             if (!alluser) return res.status(404).send({ status: false, msg: "user not found" })
 
@@ -120,56 +122,74 @@ const getallBooksById = async function (req, res) {
 // ***********************************************put api************************************************************************8
 
 const updatedocutment = async function (req, res) {
+    try {
 
-    const isValidDate = /^\d{4}-\d{2}-\d{2}$/
+        const ISBNRegex = /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/
+        const isValidDate = /^\d{4}\--(0[1-9]|1[012])\--(0[1-9]|[12][0-9]|3[01])$/
 
-    bookId = req.params.bookId
+        const bodydata = req.body
+        let bookId = req.params.bookId
 
-    if (!mongoose.isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "please provide valid bookId" })
+        const { title, excerpt, releasedAt, ISBN } = bodydata
+        let obj = {}
 
-    let nodata = await bookModel.findOne({ _id: bookId, isDeleted: false })
-    if (!nodata) return res.status(404).send({ satus: false, msg: "no books found" })
+        if(title){
+            obj.title = title
+        }
+        if(excerpt){
+            obj.excerpt = excerpt
+        }
+        if(releasedAt){
+            obj.releasedAt = releasedAt
+        }
+        if(ISBN){
+            obj.ISBN = ISBN
+        }
 
-    const bodydata = req.body
+        if (!mongoose.isValidObjectId(bookId)) return res.status(400).send({ status: false, message: "please provide valid bookId" })
+        if (Object.keys(bodydata).length == 0) return res.status(400).send({ satus: false, msg: "for updation data is required" })
 
-    if (Object.keys(bodydata).length == 0) return res.status(400).send({ satus: false, msg: "for updation data is required" })
-
-    const { title, excerpt, releasedAt, ISBN } = bodydata
-
-    let duplicateTitle = await bookModel.findOne({ title })
-    if (duplicateTitle) return res.status(400).send({ status: false, msg: "title is already registered!" })
-
-    let duplicateISBN = await bookModel.findOne({ ISBN })
-    if (duplicateISBN) return res.status(400).send({ status: false, msg: "ISBN is already registered!" })
-
-    if (isValidDate.test(releasedAt)) return res.status(400).send({ status: false, msg: "Please enter releasedAt in the right format(YYYY-MM-DD)!" })
+        if (!(title || excerpt || releasedAt || ISBN)) {
+            return res.status(400).send({ satus: false, message: "only update title, excerpt, releasedAt, ISBN" })
+        }
+        let noData = await bookModel.findOne({ _id: bookId, isDeleted: false })
+        if (!noData) return res.status(404).send({ satus: false, msg: "no books found" })
+        
+        let duplicateTitle = await bookModel.findOne({ title })
+        if (duplicateTitle) return res.status(400).send({ status: false, msg: "title is already registered!" })
 
 
-    const updateBook = await bookModel.findByIdAndUpdate({ _id: nodata._id }, { $set: bodydata }, { new: true })
+        let duplicateISBN = await bookModel.findOne({ ISBN })
+        if (duplicateISBN) return res.status(400).send({ status: false, msg: "ISBN is already registered!" })
+        if (!ISBNRegex.test(ISBN)) return res.status(400).send({ status: false, msg: "Please enter Valid ISBN!" })
 
-    return res.status(200).send({ satus: false, message: "book updated sucessfully", data: updateBook })
+        if (isValidDate.test(releasedAt)) return res.status(400).send({ status: false, msg: "Please enter releasedAt in the right format(YYYY-MM-DD)!" })
 
+        const updateBook = await bookModel.findByIdAndUpdate({ _id: noData._id }, { $set: obj }, { new: true })  //*//
 
+        return res.status(200).send({ satus: false, message: "book updated sucessfully", data: updateBook })
 
+    } catch (err) {
+        return res.status(500).send({ status: false, msg: "server error", Error: err.message })
+    }
 }
 // ************************************************delete by id*****************************************************************
 
 const deletebook = async function (req, res) {
-    try{
-    bookId = req.params.bookId
+    try {
+        const  bookId = req.params.bookId
 
-    if (!mongoose.isValidObjectId(bookId)) return res.status(400).send({ satus: false, msg: "provide valid object Id" })
+        if (!mongoose.isValidObjectId(bookId)) return res.status(400).send({ satus: false, msg: "provide valid object Id" })
 
+        let dbcall = await bookModel.findOne({ _id: bookId, isDeleted: false })
+        if (!dbcall) return res.status(404).send({ satus: false, msg: "no books found" })
 
-    let dbcall = await bookModel.findOne({ _id: bookId, isDeleted: false })
-    if (!dbcall) return res.status(404).send({ satus: false, msg: "no books found" })
+         const updateBook = await bookModel.findOneAndUpdate({ _id: bookId }, { isDeleted: true, deletedAt: new Date() }, { new: true })
 
-    updateBook = await bookModel.findOneAndUpdate({ _id: bookId }, { isDeleted: true, deletedAt: new Date() }, { new: true })
-
-    return res.status(200).send({ status: true, message: "data deleted sucessfully" })
+        return res.status(200).send({ status: true, message: "data deleted sucessfully" })
+    }
+    catch (err) {
+        return res.status(500).send({ status: false, msg: "server error", error: err.message })
+    }
 }
-catch(err){
-    return res.status(500).send({status:false,msg:"server error", error:err.message})
-}
-}
-module.exports = { createBooks, getBooks, getallBooksById, updatedocutment,deletebook }
+module.exports = { createBooks, getBooks, getallBooksById, updatedocutment, deletebook }
