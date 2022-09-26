@@ -1,12 +1,20 @@
 const userModel = require("../models/userModel")
 const jwt = require('jsonwebtoken')
 
+const isValidType = function (value) {
+    if (typeof value !== "string" || value.trim().length === 0) {
+      return false;
+    }
+    return true;
+  };
+  
+
 
 const createUser = async function (req, res) {
     try {
 
         const nameRegex = /^[a-z\s]+$/i
-        const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+        const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/   //change regex
         const mobileRegex = /^([6-9]\d{9})$/
         const passwordRegex = /^(?!.\s)[A-Za-z\d@$#!%?&]{8,15}$/
         const pincodeRegex = /^[1-9][0-9]{6}$/
@@ -19,19 +27,23 @@ const createUser = async function (req, res) {
         let titles = ["Mr", "Mrs", "Miss"]
         if (!titles.includes(title)) return res.status(400).send({ status: false, msg: `Title should be among  ${titles} or space is not allowed` })
 
+        if (name) {
+            if (!isValidType(name)) return res.status(400).send({ status: false, msg: "Name type must be a string or required some data" })
+          }
+
 
         if (!name) return res.status(400).send({ status: false, msg: "Please Provide Name" })
         if (!nameRegex.test(name)) return res.status(400).send({ status: false, msg: "Please Provide Valid Name" })
 
 
         if (!phone) return res.status(400).send({ status: false, msg: "Please Provide Mobile" })
-        if (!phone.match(mobileRegex)) return res.status(400).send({ status: false, msg: "Please Provide Valid Mobile" })
+        if (!mobileRegex.test(phone)) return res.status(400).send({ status: false, msg: "Please Provide Valid Mobile" })
 
         let duplicatePhone = await userModel.findOne({ phone })
         if (duplicatePhone) return res.status(400).send({ status: false, msg: "phone is already registered!" })
 
         if (!email) return res.status(400).send({ status: false, msg: "Please Provide Email" })
-        if (!email.match(emailRegex)) return res.status(400).send({ status: false, msg: "Please Provide Valid Email" })
+        if (!emailRegex.test(email)) return res.status(400).send({ status: false, msg: "Please Provide Valid Email" })
 
 
         let duplicateEmail = await userModel.findOne({ email })
@@ -39,7 +51,7 @@ const createUser = async function (req, res) {
 
 
         if (!password) return res.status(400).send({ status: false, msg: "Please Provide password" })
-        if (!password.match(passwordRegex)) return res.status(400).send({ status: false, msg: "Please Provide Valid password" })
+        if (!passwordRegex.test(password)) return res.status(400).send({ status: false, msg: "Please Provide Valid password" })
 
 
         if (address) {              // Nested If used here
@@ -67,7 +79,7 @@ const userLogin = async function (req, res) {
             return res.status(400).send({ status: false, msg: 'please enter data' })
         }
         if (!userName) {
-            return res.status(400).send({ status: false, msg: 'username is required' })
+            return res.status(400).send({ status: false, msg: 'Email is required' })
         }
         if (!password) {
             return res.status(400).send({ status: false, msg: 'password is required' })
@@ -84,7 +96,10 @@ const userLogin = async function (req, res) {
             }, 'project-3-group-36'
 
         )
-        res.status(201).send({ status: true, msg: 'token created successfully', data: token })
+        const decode = jwt.verify(token,'project-3-group-36')
+
+
+        res.status(201).send({ status: true, msg: 'token created successfully', data: decode,token })
 
     } catch (err) {
         return res.status(500).send({ status: false, Error: err.message })
