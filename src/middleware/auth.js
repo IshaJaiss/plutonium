@@ -3,14 +3,14 @@ const mongoose = require('mongoose')
 const bookModel = require('../models/bookModel')
 const userModel = require("../models/userModel")
 
-const authentication = async function (req, res, next) {
+const authentication =  function (req, res, next) {
     try {
         let token = req.headers['x-api-key']
         if (!token) token = req.headers['X-api-key']
         if (!token) {
             return res.status(401).send({ status: false, message: 'token is mandatory' })
         }
-        let decodedToken = jwt.verify(token, 'project-3-group-36', function (error, decodedToken) {
+        jwt.verify(token, 'project-3-group-36', function (error, decodedToken) {
             if (error) {
                 return res.status(401).send({ status: false, message: 'token is invalid' })
             } else {
@@ -25,7 +25,7 @@ const authentication = async function (req, res, next) {
 
 const authorisation1 = async function (req, res, next) {
     try {
-        data = req.body
+        let data = req.body
         const userId = data.userId
 
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Please Provide Some Data" })
@@ -37,13 +37,11 @@ const authorisation1 = async function (req, res, next) {
         }
         let userById = await userModel.findById(userId)
         if (!userById) {
-            return res.status(404).send({ status: false, message: 'book id does not exist' })
+            return res.status(404).send({ status: false, message: 'user id does not exist' })
         }
-
         if (req.loggedInUserId != userById._id) {
             return res.status(403).send({ status: false, message: "user unauthorised" })
         }
-
         next()
 
     } catch (err) {
