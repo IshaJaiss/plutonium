@@ -14,7 +14,8 @@ const urlschema=new mongoose.Schema({
     shortUrl:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        trim:true
     }
 })
 module.exports=mongoose.model('Urlmodel',urlschema)
