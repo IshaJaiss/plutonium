@@ -1,0 +1,31 @@
+{
+  "name": "blogging",
+  "version": "1.0.0",
+  "description": "project for blogging",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Datta-Landage/project-blogging-group-22.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Datta-Landage/project-blogging-group-22/issues"
+  },
+  "homepage": "https://github.com/Datta-Landage/project-blogging-group-22#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "module": "^1.2.5",
+    "mongoose": "^6.5.4",
+    "nodemon": "^2.0.19",
+    "shortid": "^2.2.16",
+    "valid-url": "^1.0.9",
+    "validator": "^13.7.0"
+  }
+}
