@@ -3,6 +3,7 @@ const shortid = require('shortid')
 const validurl = require('valid-url')
 
 const redis = require('redis')
+let urlregex=/(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/
 
 const { promisify } = require('util')
 
@@ -39,7 +40,8 @@ const createshorturl = async (req, res) => {
     if (!longUrl || typeof (longUrl) != 'string') {
       return res.status(400).send({ status: false, message: "Please enter longurl and it's must be in string format" })
     }
-    if (!validurl.isUri(longUrl)) return res.status(400).send({ status: false, message: "Enter valid url path !" })
+    // if (!validurl.isUri(longUrl)) return res.status(400).send({ status: false, message: "Enter valid url path !" })
+    if(!urlregex.test(longUrl)) return res.status(400).send({ status: false, message: "Enter valid url path !" })
     let longurlcache = await GET_ASYNC(longUrl)
 
     if (longurlcache) {
@@ -64,14 +66,14 @@ const geturl = async (req, res) => {
   try {
     const { urlCode } = req.params
     let urldata = await GET_ASYNC(`${urlCode}`)
-    
+   
     if (urldata) {
       let data = JSON.parse(urldata)
-      console.log("send from redis cache ")
-
+      console.log("send from redis cache ! ")
       return res.status(302).redirect(data.longUrl)
     }
     let result = await Urlmodel.findOne({ urlCode: urlCode })
+    if(!result) return res.status(404).send({status:false,message:"Given urlcode not found !!"})
 
     await SET_ASYNC(`${urlCode}`, JSON.stringify(result))
     console.log("send from database ")
