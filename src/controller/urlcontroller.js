@@ -40,15 +40,14 @@ const createshorturl = async (req, res) => {
     if (!longUrl || typeof (longUrl) != 'string') {
       return res.status(400).send({ status: false, message: "Please enter longurl and it's must be in string format" })
     }
-    // if (!validurl.isUri(longUrl)) return res.status(400).send({ status: false, message: "Enter valid url path !" })
+   
     if(!urlregex.test(longUrl)) return res.status(400).send({ status: false, message: "Enter valid url path !" })
     let longurlcache = await GET_ASYNC(longUrl)
-
     if (longurlcache) {
       let data = JSON.parse(longurlcache)
       console.log("Send from redis cache !")
       let url = data.shortUrl.toLowerCase()
-      return res.status(400).send({ status: false, message: "url Already exit", data: url })
+      return res.status(400).send({ status: false, message: "data from cache", data: url })
     }
     let id = shortid.generate()  //hggff
     const Data = new Urlmodel({ longUrl: longUrl, shortUrl: `http://localhost:3000/${id.toLowerCase()}`, urlCode: id })
