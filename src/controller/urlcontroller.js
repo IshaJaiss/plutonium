@@ -8,11 +8,11 @@ let urlregex=/(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?
 const { promisify } = require('util')
 
 const redisClient = redis.createClient(
-  19850,
-  "redis-19850.c301.ap-south-1-1.ec2.cloud.redislabs.com",
+  13108,
+  "redis-13108.c263.us-east-1-2.ec2.cloud.redislabs.com",
   { no_ready_check: true }
 );
-redisClient.auth("Uy613oXTZdzfMsGbnwPfDjAymfQ9zDFu", function (err) {
+redisClient.auth("zXaNskBo476BsDgngwBpfjClAQtvaOyd", function (err) {
   if (err) throw err;
 });
 
@@ -24,14 +24,6 @@ redisClient.on("connect", async function () {
 
 const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
 const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
-
-
-
-
-
-
-
-
 
 const createshorturl = async (req, res) => {
 
