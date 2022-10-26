@@ -185,10 +185,10 @@ const loginUser = async function (req, res) {
             {expiresIn:"12h"}
         )
 
-        res.status(200).send({ status: true, message: 'Success', userId: { userId, token } });
+      return  res.status(200).send({ status: true, message: 'Success', userId: { userId, token } });
 
     } catch (err) {
-        res.status(500).send({ message: "Server not responding", error: err.message });
+       return res.status(500).send({ message: "Server not responding", error: err.message });
     }
 };
 
@@ -218,7 +218,7 @@ const getuserprofile = async function (req, res) {
     
     }
     catch (err) {
-        res.status(500).send({ msg: err.message })
+      return  res.status(500).send({ msg: err.message })
     }
 }
 

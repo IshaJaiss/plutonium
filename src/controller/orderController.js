@@ -126,10 +126,10 @@ const updateOrder =async function(req,res) {
             return res.status(400).send({status: false, message: "order is already deleted"})
         }
 
-        const cartSearch = await cartModel.findOne({totalitems:0})
-        if(cartSearch) {
-            return res.status(400).send({status: false, message: "cart does not exist"})
-        }
+        // const cartSearch = await cartModel.findOne({totalitems:0})
+        // if(cartSearch) {
+        //     return res.status(400).send({status: false, message: "cart does not exist"})
+        // }
 
         if(orderSearch.isDeleted == true) {
             return res.status(400).send({status: false, message: "order is already deleted"})
